@@ -38,6 +38,13 @@ apex {
                 "libbluetooth_jni",
             ],
         },
+        both: {
+            // LHDC encoder libs loaded at runtime via dlopen
+            native_shared_libs: [
+                "liblhdcBT_enc",
+                "liblhdcv5BT_enc",
+            ],
+        },
     },
 
     prebuilts: [
@@ -120,5 +127,27 @@ bootclasspath_fragment {
 systemserverclasspath_fragment {
     name: "com.android.bt-systemserverclasspath-fragment",
     standalone_contents: ["service-bluetooth"],
+    apex_available: ["com.android.bt"],
+}
+
+// Savitech LHDC encoder prebuilt libraries.
+// These are loaded at runtime by the LHDC encoder module via dlopen.
+// The .so files must be extracted from stock vendor's com.android.btservices.apex
+// and placed in device/*/proprietary as vendor blobs.
+cc_prebuilt_library_shared {
+    name: "liblhdcBT_enc",
+    srcs: ["liblhdcBT_enc.so"],
+    strip: {
+        none: true,
+    },
+    apex_available: ["com.android.bt"],
+}
+
+cc_prebuilt_library_shared {
+    name: "liblhdcv5BT_enc",
+    srcs: ["liblhdcv5BT_enc.so"],
+    strip: {
+        none: true,
+    },
     apex_available: ["com.android.bt"],
 }

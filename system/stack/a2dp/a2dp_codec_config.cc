@@ -51,6 +51,8 @@
 #include "a2dp_vendor_aptx.h"
 #include "a2dp_vendor_aptx_hd.h"
 #include "a2dp_vendor_ldac.h"
+#include "a2dp_vendor_lhdcv3.h"
+#include "a2dp_vendor_lhdcv5.h"
 #include "a2dp_vendor_opus.h"
 #endif
 
@@ -219,6 +221,17 @@ A2dpCodecConfig* A2dpCodecConfig::createCodec(btav_a2dp_codec_index_t codec_inde
       break;
     case BTAV_A2DP_CODEC_INDEX_SINK_OPUS:
       codec_config = new A2dpCodecConfigOpusSink(codec_priority);
+      break;
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3:
+      codec_config = new A2dpCodecConfigLhdcV3(codec_priority);
+      break;
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      codec_config = new A2dpCodecConfigLhdcV5Source(codec_priority);
+      break;
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3:
+      break;  // LHDC V3 is source-only in this port
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      codec_config = new A2dpCodecConfigLhdcV5Sink(codec_priority);
       break;
 #endif
     case BTAV_A2DP_CODEC_INDEX_MAX:

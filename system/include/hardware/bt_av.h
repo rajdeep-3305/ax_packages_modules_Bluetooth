@@ -69,6 +69,9 @@ typedef enum {
   // Indexes in this range will be allocated for offloaded codecs
   // that the stack does not recognize.
   BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN = BTAV_A2DP_CODEC_INDEX_SOURCE_MAX,
+  // Savitech LHDC vendor codec extensions
+  BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3 = BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN,
+  BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5 = BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 1,
   BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MAX = BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 4,
 
   BTAV_A2DP_CODEC_INDEX_SINK_MIN = BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MAX,
@@ -84,6 +87,9 @@ typedef enum {
   // Indexes in this range will be allocated for offloaded codecs
   // that the stack does not recognize.
   BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN = BTAV_A2DP_CODEC_INDEX_SINK_MAX,
+  // Savitech LHDC vendor codec extensions
+  BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3 = BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN,
+  BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5 = BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 1,
   BTAV_A2DP_CODEC_INDEX_SINK_EXT_MAX = BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 4,
 
   BTAV_A2DP_CODEC_INDEX_MIN = BTAV_A2DP_CODEC_INDEX_SOURCE_MIN,
@@ -195,10 +201,20 @@ struct btav_a2dp_codec_config_t {
         return "Opus (Sink)";
       case BTAV_A2DP_CODEC_INDEX_SOURCE_OPUS:
         return "Opus";
+      case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3:
+        return "LHDC V3";
+      case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+        return "LHDC V5";
+      case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3:
+        return "LHDC V3 (Sink)";
+      case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+        return "LHDC V5 (Sink)";
       case BTAV_A2DP_CODEC_INDEX_MAX:
         return "Unknown(CODEC_INDEX_MAX)";
-      case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN:
-      case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN:
+      case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 2:
+      case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 3:
+      case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 2:
+      case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 3:
         return "Unknown(CODEC_EXT)";
     }
     return "Unknown";

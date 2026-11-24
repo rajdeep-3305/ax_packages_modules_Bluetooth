@@ -34,6 +34,9 @@
 #include "a2dp_vendor_aptx_hd_constants.h"
 #include "a2dp_vendor_ldac.h"
 #include "a2dp_vendor_ldac_constants.h"
+#include "a2dp_vendor_lhdc_constants.h"
+#include "a2dp_vendor_lhdcv3.h"
+#include "a2dp_vendor_lhdcv5.h"
 #include "a2dp_vendor_opus.h"
 #include "a2dp_vendor_opus_constants.h"
 #include "avdt_api.h"
@@ -66,6 +69,16 @@ bool A2DP_IsVendorSourceCodecValid(const uint8_t* p_codec_info) {
     return A2DP_IsCodecValidOpus(p_codec_info);
   }
 
+  // Check for Savitech LHDC V3
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV3_CODEC_ID) {
+    return A2DP_IsVendorSourceCodecValidLhdcV3(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSourceCodecValidLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return false;
@@ -86,6 +99,16 @@ bool A2DP_IsVendorPeerSourceCodecValid(const uint8_t* p_codec_info) {
   // Check for Opus
   if (vendor_id == A2DP_OPUS_VENDOR_ID && codec_id == A2DP_OPUS_CODEC_ID) {
     return A2DP_IsCodecValidOpus(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V3
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV3_CODEC_ID) {
+    return A2DP_IsVendorSourceCodecValidLhdcV3(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSourceCodecValidLhdcV5(p_codec_info);
   }
 
   return false;
@@ -115,6 +138,13 @@ bool A2DP_IsVendorPeerSinkCodecValid(const uint8_t* p_codec_info) {
   // Check for Opus
   if (vendor_id == A2DP_OPUS_VENDOR_ID && codec_id == A2DP_OPUS_CODEC_ID) {
     return A2DP_IsCodecValidOpus(p_codec_info);
+  }
+
+  // LHDC V3 is source-only; no sink validation for V3
+
+  // Check for Savitech LHDC V5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSinkCodecValidLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -409,6 +439,16 @@ btav_a2dp_codec_index_t A2DP_VendorSourceCodecIndex(const uint8_t* p_codec_info)
     return A2DP_VendorSourceCodecIndexOpus(p_codec_info);
   }
 
+  // Check for Savitech LHDC V3
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV3_CODEC_ID) {
+    return BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3;
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5;
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return BTAV_A2DP_CODEC_INDEX_MAX;
@@ -424,6 +464,16 @@ btav_a2dp_codec_index_t A2DP_VendorSinkCodecIndex(const uint8_t* p_codec_info) {
   // Check for Opus
   if (vendor_id == A2DP_OPUS_VENDOR_ID && codec_id == A2DP_OPUS_CODEC_ID) {
     return A2DP_VendorSinkCodecIndexOpus(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V3 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV3_CODEC_ID) {
+    return BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3;
+  }
+
+  // Check for Savitech LHDC V5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5;
   }
 
   return BTAV_A2DP_CODEC_INDEX_MAX;
@@ -449,11 +499,21 @@ const char* A2DP_VendorCodecIndexStr(btav_a2dp_codec_index_t codec_index) {
       return A2DP_VendorCodecIndexStrOpus();
     case BTAV_A2DP_CODEC_INDEX_SINK_OPUS:
       return A2DP_VendorCodecIndexStrOpusSink();
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3:
+      return "LHDC V3";
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      return "LHDC V5";
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3:
+      return "LHDC V3 (Sink)";
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      return "LHDC V5 (Sink)";
     // Add a switch statement for each vendor-specific codec
     case BTAV_A2DP_CODEC_INDEX_MAX:
       break;
-    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN:
-    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN:
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 2:
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 3:
+    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 2:
+    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 3:
       break;
   }
 
@@ -480,11 +540,21 @@ bool A2DP_VendorInitCodecConfig(btav_a2dp_codec_index_t codec_index, AvdtpSepCon
       return A2DP_VendorInitCodecConfigOpus(p_cfg);
     case BTAV_A2DP_CODEC_INDEX_SINK_OPUS:
       return A2DP_VendorInitCodecConfigOpusSink(p_cfg);
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV3:
+      return A2DP_VendorInitCodecConfigLhdcV3(p_cfg);
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      return A2DP_VendorInitCodecConfigLhdcV5(p_cfg);
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV3:
+      break;  // LHDC V3 source-only in this port
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      return A2DP_VendorInitCodecConfigLhdcV5Sink(p_cfg);
     // Add a switch statement for each vendor-specific codec
     case BTAV_A2DP_CODEC_INDEX_MAX:
       break;
-    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN:
-    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN:
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 2:
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_EXT_MIN + 3:
+    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 2:
+    case BTAV_A2DP_CODEC_INDEX_SINK_EXT_MIN + 3:
       break;
   }
 
@@ -513,6 +583,16 @@ std::string A2DP_VendorCodecInfoString(const uint8_t* p_codec_info) {
   // Check for Opus
   if (vendor_id == A2DP_OPUS_VENDOR_ID && codec_id == A2DP_OPUS_CODEC_ID) {
     return A2DP_VendorCodecInfoStringOpus(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V3
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV3_CODEC_ID) {
+    return A2DP_VendorCodecInfoStringLhdcV3(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorCodecInfoStringLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
